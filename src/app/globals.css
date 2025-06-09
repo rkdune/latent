@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-mono), 'Courier New', monospace;
+}
+
+/* Dark theme styles */
+[data-theme="dark"] .terminal-input::placeholder {
+  color: #ABABAB;
+}
+
+[data-theme="dark"] .sidebar-chat-item:not(.active):hover {
+  background-color: #333333 !important;
+}
+
+[data-theme="dark"] .tab-item:not(.active):hover {
+  background-color: #333333 !important;
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover {
+  background-color: #333333 !important;
+}
+
+/* Light theme styles */
+[data-theme="light"] .terminal-input::placeholder {
+  color: #8F8F8F;
+}
+
+[data-theme="light"] .sidebar-chat-item:not(.active):hover {
+  background-color: #D0D0D0 !important;
+}
+
+[data-theme="light"] .tab-item:not(.active):hover {
+  background-color: #D0D0D0 !important;
+}
+
+[data-theme="light"] .theme-toggle-btn:hover {
+  background-color: #D0D0D0 !important;
+}
