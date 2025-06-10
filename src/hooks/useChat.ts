@@ -27,6 +27,23 @@ export function useChat() {
     )
   }, [])
 
+  const updateMessage = useCallback((chatId: number, messageId: string, content: string) => {
+    setChats(prevChats => 
+      prevChats.map(chat => 
+        chat.id === chatId 
+          ? { 
+              ...chat, 
+              messages: chat.messages.map(msg => 
+                msg.id === messageId 
+                  ? { ...msg, content }
+                  : msg
+              )
+            }
+          : chat
+      )
+    )
+  }, [])
+
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim() || isLoading) return
 
@@ -57,6 +74,17 @@ export function useChat() {
       )
     }
 
+    // Create AI message placeholder
+    const aiMessageId = (Date.now() + 1).toString()
+    const aiMessage: Message = {
+      id: aiMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date()
+    }
+
+    addMessage(currentChat.id, aiMessage)
+
     try {
       // Prepare messages for API
       const allMessages = [...currentChat.messages, userMessage].map(msg => ({
@@ -72,35 +100,58 @@ export function useChat() {
         body: JSON.stringify({ messages: allMessages }),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to get response')
+        throw new Error('Failed to get response')
       }
 
-      // Add AI response
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.message,
-        timestamp: new Date()
+      // Handle streaming response
+      const reader = response.body?.getReader()
+      if (!reader) {
+        throw new Error('No response body')
       }
 
-      addMessage(currentChat.id, aiMessage)
+      const decoder = new TextDecoder()
+      let accumulatedContent = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split('\n').filter(line => line.trim())
+
+        for (const line of lines) {
+          try {
+            const data = JSON.parse(line)
+            
+            if (data.content) {
+              accumulatedContent += data.content
+              updateMessage(currentChat.id, aiMessageId, accumulatedContent)
+            }
+            
+            if (data.done) {
+              setIsLoading(false)
+              return
+            }
+            
+            if (data.error) {
+              throw new Error(data.error)
+            }
+          } catch (parseError) {
+            console.warn('Failed to parse streaming data:', parseError)
+          }
+        }
+      }
+
     } catch (error) {
       console.error('Error sending message:', error)
-      // Add error message
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: new Date()
-      }
-      addMessage(currentChat.id, errorMessage)
+      // Update the AI message with error content
+      updateMessage(currentChat.id, aiMessageId, 'Sorry, I encountered an error. Please try again.')
     } finally {
       setIsLoading(false)
     }
-  }, [getCurrentChat, addMessage, isLoading])
+  }, [getCurrentChat, addMessage, updateMessage, isLoading])
 
   const createNewChat = useCallback(() => {
     const newChat: Chat = {

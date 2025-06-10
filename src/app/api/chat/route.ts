@@ -26,16 +26,39 @@ export async function POST(request: NextRequest) {
       model: "google/gemma-3n-e4b-it:free",
       messages: messages,
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 2500,
+      stream: true, // Enable streaming
     })
 
-    const aiMessage = completion.choices[0]?.message?.content
+    // Create a ReadableStream for the streaming response
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of completion) {
+            const content = chunk.choices[0]?.delta?.content || ''
+            if (content) {
+              // Send the content as a JSON string with a newline delimiter
+              const data = JSON.stringify({ content }) + '\n'
+              controller.enqueue(new TextEncoder().encode(data))
+            }
+          }
+          // Send a final message to indicate the stream is complete
+          controller.enqueue(new TextEncoder().encode(JSON.stringify({ done: true }) + '\n'))
+        } catch (error) {
+          console.error('Streaming error:', error)
+          controller.enqueue(new TextEncoder().encode(JSON.stringify({ error: 'Streaming failed' }) + '\n'))
+        } finally {
+          controller.close()
+        }
+      }
+    })
 
-    if (!aiMessage) {
-      throw new Error('No response from AI model')
-    }
-
-    return NextResponse.json({ message: aiMessage })
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
+      },
+    })
   } catch (error) {
     console.error('Chat API error:', error)
     return NextResponse.json(

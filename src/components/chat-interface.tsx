@@ -6,6 +6,9 @@ import { Menu, X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon } from "lucide-
 import { useChat } from "@/hooks/useChat"
 import { useTheme } from "@/contexts/ThemeContext"
 import { Message } from "@/types/chat"
+import ReactMarkdown from 'react-markdown'
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import { synthwave84 } from "react-syntax-highlighter/dist/esm/styles/prism"
 
 export default function ChatInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -60,6 +63,48 @@ export default function ChatInterface() {
 
   const currentChat = getCurrentChat()
 
+  const markdownComponents = {
+    code({ node, inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || '')
+      const language = match ? match[1] : ''
+      
+      // More explicit inline detection
+      const isInline = inline || !className || !language
+      
+      return !isInline ? (
+        <SyntaxHighlighter
+          style={synthwave84}
+          language={language}
+          PreTag="div"
+          customStyle={{
+            backgroundColor: theme.colors.secondaryBackground,
+            border: `1px solid ${theme.colors.border}`,
+            borderRadius: '4px',
+            fontSize: '0.875rem',
+          }}
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      ) : (
+        <code
+          style={{
+            backgroundColor: theme.colors.secondaryBackground,
+            color: theme.colors.primaryText,
+            padding: '2px 4px',
+            borderRadius: '3px',
+            fontSize: '0.875rem',
+            display: 'inline', // Explicitly set as inline
+            whiteSpace: 'nowrap', // Prevent wrapping
+          }}
+          {...props}
+        >
+          {children}
+        </code>
+      )
+    }
+  }
+
   return (
     <div className="h-screen flex flex-col" style={{backgroundColor: theme.colors.primaryBackground}}>
       {/* Unified Tab Bar */}
@@ -68,10 +113,11 @@ export default function ChatInterface() {
           {/* Sidebar Toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="px-3 flex items-center transition-colors"
-            style={{borderRight: `1px solid ${theme.colors.border}`}}
-            onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = theme.colors.borderHover}
-            onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = 'transparent'}
+            className="px-3 flex items-center transition-colors sidebar-toggle-btn"
+            style={{
+              borderRight: `1px solid ${theme.colors.border}`,
+              backgroundColor: 'transparent'
+            }}
           >
             {sidebarOpen ? (
               <PanelLeftClose className="w-4 h-4" style={{color: theme.colors.primaryText}} />
@@ -136,9 +182,8 @@ export default function ChatInterface() {
           {/* New Chat Button */}
           <button
             onClick={createNewChat}
-            className="px-3 flex items-center transition-colors"
-            onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = theme.colors.borderHover}
-            onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = 'transparent'}
+            className="px-3 flex items-center transition-colors new-chat-btn"
+            style={{backgroundColor: 'transparent'}}
             title="New Chat"
           >
             <Plus className="w-4 h-4" style={{color: theme.colors.primaryText}} />
@@ -202,7 +247,7 @@ export default function ChatInterface() {
                     <div className="flex items-center gap-2 text-xs" style={{color: theme.colors.secondaryText}}>
                       <span>{message.role === 'user' ? 'You' : 'AI'}</span>
                       <span>•</span>
-                      <span>{formatTimestamp(message.timestamp)}</span>
+                      <span>{message.role === 'assistant' && message.content === '' && isLoading ? 'typing...' : formatTimestamp(message.timestamp)}</span>
                     </div>
                     <div 
                       className="whitespace-pre-wrap"
@@ -212,11 +257,17 @@ export default function ChatInterface() {
                         borderLeft: `2px solid ${theme.colors.border}`
                       }}
                     >
-                      {message.content}
+                      {message.content ? (
+                        message.role === 'assistant' ? (
+                          <ReactMarkdown components={markdownComponents}>{message.content}</ReactMarkdown>
+                        ) : (
+                          message.content
+                        )
+                      ) : (message.role === 'assistant' && isLoading ? '●●●' : '')}
                     </div>
                   </div>
                 ))}
-                {isLoading && (
+                {isLoading && currentChat?.messages.length === 0 && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-xs" style={{color: theme.colors.secondaryText}}>
                       <span>AI</span>
