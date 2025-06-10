@@ -2,13 +2,13 @@
 
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { Menu, X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon } from "lucide-react"
+import { X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon } from "lucide-react"
 import { useChat } from "@/hooks/useChat"
 import { useTheme } from "@/contexts/ThemeContext"
-import { Message } from "@/types/chat"
 import ReactMarkdown from 'react-markdown'
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import { synthwave84 } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { Components } from 'react-markdown'
 
 export default function ChatInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -30,9 +30,10 @@ export default function ChatInterface() {
   } = useChat()
 
   // Auto-scroll to bottom when new messages arrive
+  const currentMessages = getCurrentChat()?.messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [getCurrentChat()?.messages])
+  }, [currentMessages])
 
   // Focus input when component mounts
   useEffect(() => {
@@ -63,8 +64,9 @@ export default function ChatInterface() {
 
   const currentChat = getCurrentChat()
 
-  const markdownComponents = {
-    code({ node, inline, className, children, ...props }) {
+  const markdownComponents: Components = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    code({ inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || '')
       const language = match ? match[1] : ''
       
