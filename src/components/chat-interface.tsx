@@ -15,6 +15,7 @@ export default function ChatInterface() {
   const [inputValue, setInputValue] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   
   const { theme, themeName, toggleTheme } = useTheme()
   
@@ -29,10 +30,17 @@ export default function ChatInterface() {
     isLoading
   } = useChat()
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive, but only if user is already at bottom
   const currentMessages = getCurrentChat()?.messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (!messagesContainerRef.current) return
+    
+    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 80 // 100px threshold
+    
+    if (isAtBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
   }, [currentMessages])
 
   // Focus input when component mounts
@@ -232,7 +240,7 @@ export default function ChatInterface() {
         {/* Main Chat Area */}
         <main className="flex-1 flex flex-col" style={{backgroundColor: theme.colors.primaryBackground, color: theme.colors.primaryText}}>
           {/* Messages Area */}
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div ref={messagesContainerRef} className="flex-1 p-4 overflow-y-auto">
             {currentChat?.messages.length === 0 ? (
               <div className="space-y-4">
                 <div style={{color: theme.colors.primaryText}}>
