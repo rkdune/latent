@@ -13,7 +13,7 @@ const openai = new OpenAI({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { messages } = body
+    const { messages, model } = body
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     const completion = await openai.chat.completions.create({
-      model: "google/gemma-3n-e4b-it:free", // gemma 3 4b (free) endpoint
+      model: model || "google/gemma-3n-e4b-it:free", // Use selected model or default
       messages: messages,
       temperature: 0.7,
       max_tokens: 2500,

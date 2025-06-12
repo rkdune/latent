@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react'
 import { Message, Chat } from '@/types/chat'
+import { useModel } from '@/contexts/ModelContext'
 
 export function useChat() {
+  const { selectedModel } = useModel()
   const [chats, setChats] = useState<Chat[]>([
     { 
       id: 1, 
@@ -97,7 +99,7 @@ export function useChat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({ messages: allMessages, model: selectedModel.endpoint }),
       })
 
       if (!response.ok) {
@@ -151,7 +153,7 @@ export function useChat() {
     } finally {
       setIsLoading(false)
     }
-  }, [getCurrentChat, addMessage, updateMessage, isLoading])
+  }, [getCurrentChat, addMessage, updateMessage, isLoading, selectedModel])
 
   const createNewChat = useCallback(() => {
     const newChat: Chat = {

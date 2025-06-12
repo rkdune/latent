@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ModelProvider } from "@/contexts/ModelContext";
 import { ThemeWrapper } from "@/components/theme-wrapper";
 
 const geistSans = Geist({
@@ -31,9 +32,11 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <ThemeProvider>
-          <ThemeWrapper>
-            {children}
-          </ThemeWrapper>
+          <ModelProvider>
+            <ThemeWrapper>
+              {children}
+            </ThemeWrapper>
+          </ModelProvider>
         </ThemeProvider>
       </body>
     </html>

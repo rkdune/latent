@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon } from "lucide-react"
 import { useChat } from "@/hooks/useChat"
 import { useTheme } from "@/contexts/ThemeContext"
+import ModelSelector from "./model-selector"
 import ReactMarkdown from 'react-markdown'
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import { synthwave84 } from "react-syntax-highlighter/dist/esm/styles/prism"
@@ -171,12 +172,14 @@ export default function ChatInterface() {
             ))}
           </div>
           
+          {/* Model Selector */}
+          <ModelSelector />
+          
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
             className="px-3 flex items-center transition-colors theme-toggle-btn"
             style={{
-              borderLeft: `1px solid ${theme.colors.border}`, 
               borderRight: `1px solid ${theme.colors.border}`,
               backgroundColor: 'transparent'
             }}
