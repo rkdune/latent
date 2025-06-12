@@ -1,4 +1,18 @@
-# Latent Chat
+# Logits.App
+
+![Demo GIF](https://github.com/rkdune/latent/blob/main/demogif.gif)
+
+
+A modern, terminal-inspired AI chat interface built with Next.js and OpenRouter. Features a sleek dark theme, markdown support, and beautiful code blocks.
+
+## Features
+
+- 💬 Real-time streaming responses
+- 📝 Markdown and code syntax highlighting
+- 🔄 Multiple AI model support via OpenRouter
+- 💾 Chat history management
+- 🌓 Theme customization
+
 
 ## Color Palette
 
