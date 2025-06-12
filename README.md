@@ -14,28 +14,37 @@ A modern, terminal-inspired AI chat interface built with Next.js and OpenRouter.
 - 🌓 Theme customization
 
 
-## Color Palette
-
-- **Text**: #DEDEDE (active/strong white)
-- **Inactive Text**: #ABABAB (weaker gray)
-- **Dark Background**: #181818 (main areas)
-- **Lighter Dark Background**: #252525 (inactive/header areas)
-- **Borders**: #404040, Hover: #333333
-
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── api/chat/route.ts    # OpenRouter API integration
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx            # Main page
+│   ├── api/chat/
+│   │   └── route.ts           # OpenRouter API integration and streaming
+│   ├── globals.css            # Global styles and CSS variables
+│   ├── layout.tsx             # Root layout with providers
+│   └── page.tsx               # Main application entry point
 ├── components/
-│   └── chat-interface.tsx   # Main chat UI component
+│   ├── chat-interface.tsx     # Main chat UI component
+│   ├── model-selector.tsx     # AI model selection dropdown
+│   └── theme-wrapper.tsx      # Theme application wrapper
+├── contexts/
+│   ├── ModelContext.tsx       # Model selection state management
+│   └── ThemeContext.tsx       # Theme state management
 ├── hooks/
-│   └── useChat.ts          # Chat state management
+│   └── useChat.ts             # Chat state and message handling
 ├── lib/
-│   └── utils.ts            # Utility functions
+│   └── utils.ts               # Utility functions (cn, etc.)
 └── types/
-    └── chat.ts             # TypeScript type definitions
+    └── chat.ts                # TypeScript type definitions
 ```
+
+## Color Palette
+
+- **Primary Text**: #DEDEDE (active/strong white)
+- **Secondary Text**: #ABABAB (weaker gray)
+- **Primary Background**: #181818 (main areas)
+- **Secondary Background**: #252525 (inactive/header areas)
+- **Border**: #404040
+- **Border Hover**: #333333
+
