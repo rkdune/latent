@@ -244,7 +244,7 @@ export default function ChatInterface() {
             {currentChat?.messages.length === 0 ? (
               <div className="space-y-4">
                 <div style={{color: theme.colors.primaryText}}>
-                  Welcome to Latent Terminal Chat
+                  Welcome to Logits.
                 </div>
                 <div style={{color: theme.colors.secondaryText}}>
                   Type your message and press Enter to chat with AI

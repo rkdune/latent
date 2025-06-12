@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     const completion = await openai.chat.completions.create({
-      model: "google/gemma-3n-e4b-it:free",
+      model: "google/gemma-3n-e4b-it:free", // gemma 3 4b (free) endpoint
       messages: messages,
       temperature: 0.7,
       max_tokens: 2500,
