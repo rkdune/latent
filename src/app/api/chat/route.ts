@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-  defaultHeaders: {
-    "HTTP-Referer": "http://localhost:3000", // Optional: for OpenRouter analytics
-    "X-Title": "Latent Terminal Chat", // Optional: for OpenRouter analytics
-  },
-})
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -21,6 +12,27 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Get API key from headers (user's key) or fallback to environment variable
+    const userApiKey = request.headers.get('x-api-key')
+    const apiKey = userApiKey || process.env.OPENROUTER_API_KEY
+
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'No API key available' },
+        { status: 401 }
+      )
+    }
+
+    // Create OpenAI instance with appropriate API key
+    const openai = new OpenAI({
+      apiKey: apiKey,
+      baseURL: "https://openrouter.ai/api/v1",
+      defaultHeaders: {
+        "HTTP-Referer": "http://localhost:3000", // Optional: for OpenRouter analytics
+        "X-Title": "Latent Terminal Chat", // Optional: for OpenRouter analytics
+      },
+    })
 
     const completion = await openai.chat.completions.create({
       model: model || "google/gemma-3n-e4b-it:free", // Use selected model or default

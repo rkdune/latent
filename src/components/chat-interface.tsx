@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon } from "lucide-react"
+import { X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon, Key } from "lucide-react"
 import { useChat } from "@/hooks/useChat"
 import { useTheme } from "@/contexts/ThemeContext"
+import { useApiKey } from "@/contexts/ApiKeyContext"
 import ModelSelector from "./model-selector"
+import ApiKeyModal from "./ApiKeyModal"
 import ReactMarkdown from 'react-markdown'
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import { synthwave84 } from "react-syntax-highlighter/dist/esm/styles/prism"
@@ -14,11 +16,13 @@ import { Components } from 'react-markdown'
 export default function ChatInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [inputValue, setInputValue] = useState("")
+  const [apiKeyModalOpen, setApiKeyModalOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   
   const { theme, themeName, toggleTheme } = useTheme()
+  const { hasApiKey } = useApiKey()
   
   const {
     chats,
@@ -191,6 +195,19 @@ export default function ChatInterface() {
               <Moon className="w-4 h-4" style={{color: theme.colors.primaryText}} />
             )}
           </button>
+
+          {/* API Key Button */}
+          <button
+            onClick={() => setApiKeyModalOpen(true)}
+            className="px-3 flex items-center transition-colors api-key-btn"
+            style={{
+              borderRight: `1px solid ${theme.colors.border}`,
+              backgroundColor: 'transparent'
+            }}
+            title="Configure OpenRouter API Key"
+          >
+            <Key className="w-4 h-4" style={{color: hasApiKey ? theme.colors.primaryText : theme.colors.secondaryText}} />
+          </button>
           
           {/* New Chat Button */}
           <button
@@ -331,6 +348,12 @@ export default function ChatInterface() {
           </form>
         </main>
       </div>
+
+      {/* API Key Modal */}
+      <ApiKeyModal 
+        isOpen={apiKeyModalOpen} 
+        onClose={() => setApiKeyModalOpen(false)} 
+      />
     </div>
   )
 } 

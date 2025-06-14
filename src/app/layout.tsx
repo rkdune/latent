@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ModelProvider } from "@/contexts/ModelContext";
+import { ApiKeyProvider } from "@/contexts/ApiKeyContext";
 import { ThemeWrapper } from "@/components/theme-wrapper";
 
 const geistSans = Geist({
@@ -32,11 +33,13 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <ThemeProvider>
-          <ModelProvider>
-            <ThemeWrapper>
-              {children}
-            </ThemeWrapper>
-          </ModelProvider>
+          <ApiKeyProvider>
+            <ModelProvider>
+              <ThemeWrapper>
+                {children}
+              </ThemeWrapper>
+            </ModelProvider>
+          </ApiKeyProvider>
         </ThemeProvider>
       </body>
     </html>

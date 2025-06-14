@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react'
 import { Message, Chat } from '@/types/chat'
 import { useModel } from '@/contexts/ModelContext'
+import { useApiKey } from '@/contexts/ApiKeyContext'
 
 export function useChat() {
   const { selectedModel } = useModel()
+  const { apiKey } = useApiKey()
   const [chats, setChats] = useState<Chat[]>([
     { 
       id: 1, 
@@ -94,11 +96,19 @@ export function useChat() {
         content: msg.content
       }))
 
+      // Prepare headers
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      }
+      
+      // Include user's API key if available
+      if (apiKey) {
+        headers['x-api-key'] = apiKey
+      }
+
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ messages: allMessages, model: selectedModel.endpoint }),
       })
 
