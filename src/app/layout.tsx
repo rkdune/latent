@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Latent",
+  title: "Logits",
   description: "A terminal-style AI chat interface",
 };
 

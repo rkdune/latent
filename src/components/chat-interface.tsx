@@ -289,7 +289,9 @@ export default function ChatInterface() {
                     >
                       {message.content ? (
                         message.role === 'assistant' ? (
-                          <ReactMarkdown components={markdownComponents}>{message.content}</ReactMarkdown>
+                          <div className="markdown-content">
+                            <ReactMarkdown components={markdownComponents}>{message.content}</ReactMarkdown>
+                          </div>
                         ) : (
                           message.content
                         )

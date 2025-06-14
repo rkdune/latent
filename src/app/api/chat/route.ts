@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
         "HTTP-Referer": "http://localhost:3000", // Optional: for OpenRouter analytics
-        "X-Title": "Latent Terminal Chat", // Optional: for OpenRouter analytics
+        "X-Title": "Logits Terminal Chat", // Optional: for OpenRouter analytics
       },
     })
 

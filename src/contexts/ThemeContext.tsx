@@ -18,7 +18,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Load theme from localStorage on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('latent-theme') as ThemeName
+    const savedTheme = localStorage.getItem('logits-theme') as ThemeName
     if (savedTheme && themes[savedTheme]) {
       setThemeName(savedTheme)
     }
@@ -26,7 +26,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Save theme to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem('latent-theme', themeName)
+    localStorage.setItem('logits-theme', themeName)
   }, [themeName])
 
   const setTheme = (newThemeName: ThemeName) => {

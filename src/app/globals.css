@@ -81,3 +81,45 @@ body {
 [data-theme="light"] .api-key-btn:hover {
   background-color: #D0D0D0 !important;
 }
+
+/* Compact markdown styling */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin: 0;
+  font-weight: bold;
+}
+
+.markdown-content p {
+  margin: 0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.markdown-content li {
+  margin: 0;
+}
+
+.markdown-content blockquote {
+  margin: 0;
+  padding-left: 0.75rem;
+}
+
+.markdown-content pre {
+  margin: 0;
+}
+
+.markdown-content > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-content > *:last-child {
+  margin-bottom: 0;
+}
