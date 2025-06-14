@@ -1,4 +1,4 @@
-# [Logits.App](https://logits.app){:target="_blank"}
+# [Logits.App](https://logits.app)
 
 ![Demo GIF](https://github.com/rkdune/latent/blob/main/demogif.gif)
 
