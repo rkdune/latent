@@ -1,4 +1,4 @@
-# [Logits.App](https://logits.app)
+# [Logits.App](https://logits.app){:target="_blank"}
 
 ![Demo GIF](https://github.com/rkdune/latent/blob/main/demogif.gif)
 
@@ -55,4 +55,3 @@ src/
 - **Secondary Background**: #252525 (inactive/header areas)
 - **Border**: #404040
 - **Border Hover**: #333333
-
