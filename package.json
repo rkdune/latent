@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next-auth/supabase-adapter": "^0.2.1",
+    "@supabase/supabase-js": "^2.50.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.513.0",
     "next": "^15.3.3",
+    "next-auth": "^4.24.11",
     "openai": "^5.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

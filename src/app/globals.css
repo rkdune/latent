@@ -53,6 +53,10 @@ body {
   background-color: #333333 !important;
 }
 
+[data-theme="dark"] .auth-btn:hover {
+  background-color: #333333 !important;
+}
+
 /* Light theme styles */
 [data-theme="light"] .terminal-input::placeholder {
   color: #8F8F8F;
@@ -79,6 +83,10 @@ body {
 }
 
 [data-theme="light"] .api-key-btn:hover {
+  background-color: #D0D0D0 !important;
+}
+
+[data-theme="light"] .auth-btn:hover {
   background-color: #D0D0D0 !important;
 }
 

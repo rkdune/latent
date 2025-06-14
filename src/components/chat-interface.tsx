@@ -2,11 +2,12 @@
 
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon, Key } from "lucide-react"
+import { X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon, Key, User, LogOut, Trash2 } from "lucide-react"
 import { useChat } from "@/hooks/useChat"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useApiKey } from "@/contexts/ApiKeyContext"
 import { useModel } from "@/contexts/ModelContext"
+import { useAuth } from "@/contexts/AuthContext"
 import ModelSelector from "./model-selector"
 import ApiKeyModal from "./ApiKeyModal"
 import ReactMarkdown from 'react-markdown'
@@ -25,14 +26,18 @@ export default function ChatInterface() {
   const { theme, themeName, toggleTheme } = useTheme()
   const { hasApiKey } = useApiKey()
   const { selectedModel } = useModel()
+  const { isAuthenticated, user, signIn, signOut } = useAuth()
   
   const {
     chats,
     activeChat,
     setActiveChat,
+    allChats,
+    openChatInTab,
     getCurrentChat,
     sendMessage,
     createNewChat,
+    closeTab,
     deleteChat,
     isLoading
   } = useChat()
@@ -163,7 +168,7 @@ export default function ChatInterface() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      deleteChat(chat.id)
+                      closeTab(chat.id)
                     }}
                     className="ml-auto p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
                     style={{backgroundColor: 'transparent'}}
@@ -180,6 +185,24 @@ export default function ChatInterface() {
           
           {/* Model Selector */}
           <ModelSelector />
+          
+          {/* Auth Button */}
+          <button
+            onClick={isAuthenticated ? signOut : signIn}
+            className="px-3 flex items-center transition-colors auth-btn"
+            style={{
+              borderLeft: `1px solid ${theme.colors.border}`,
+              borderRight: `1px solid ${theme.colors.border}`,
+              backgroundColor: 'transparent'
+            }}
+            title={isAuthenticated ? `Sign out (${user?.name})` : 'Sign in for persistent chats'}
+          >
+            {isAuthenticated ? (
+              <LogOut className="w-4 h-4" style={{color: theme.colors.primaryText}} />
+            ) : (
+              <User className="w-4 h-4" style={{color: theme.colors.secondaryText}} />
+            )}
+          </button>
           
           {/* Theme Toggle Button */}
           <button
@@ -237,22 +260,40 @@ export default function ChatInterface() {
               Chat History
             </h2>
             <div className="space-y-1">
-              {chats.map((chat) => (
+              {allChats.map((chat) => (
                 <div
                   key={chat.id}
-                  onClick={() => setActiveChat(chat.id)}
-                  className={`p-2 rounded cursor-pointer transition-colors sidebar-chat-item ${activeChat === chat.id ? 'active' : ''}`}
+                  className={`group relative p-2 rounded cursor-pointer transition-colors sidebar-chat-item ${activeChat === chat.id ? 'active' : ''}`}
                   style={{
                     backgroundColor: activeChat === chat.id ? theme.colors.borderHover : 'transparent',
                     color: activeChat === chat.id ? theme.colors.primaryText : theme.colors.secondaryText
                   }}
                 >
-                  <div className="text-xs">
-                    {chat.title}
+                  <div onClick={() => openChatInTab(chat.id)} className="flex-1">
+                    <div className="text-xs">
+                      {chat.title}
+                    </div>
+                    <div className="text-xs" style={{color: theme.colors.secondaryText}}>
+                      {chat.timestamp}
+                    </div>
                   </div>
-                  <div className="text-xs" style={{color: theme.colors.secondaryText}}>
-                    {chat.timestamp}
-                  </div>
+                  {chat.messages.length > 0 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (confirm(`Are you sure you want to permanently delete "${chat.title}"? This cannot be undone.`)) {
+                          deleteChat(chat.id)
+                        }
+                      }}
+                      className="absolute top-1 right-1 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{backgroundColor: 'transparent'}}
+                      onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = theme.colors.border}
+                      onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = 'transparent'}
+                      title="Delete chat permanently"
+                    >
+                      <Trash2 className="w-3 h-3" style={{color: theme.colors.secondaryText}} />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
