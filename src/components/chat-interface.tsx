@@ -6,6 +6,7 @@ import { X, Plus, PanelLeftOpen, PanelLeftClose, Sun, Moon, Key } from "lucide-r
 import { useChat } from "@/hooks/useChat"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useApiKey } from "@/contexts/ApiKeyContext"
+import { useModel } from "@/contexts/ModelContext"
 import ModelSelector from "./model-selector"
 import ApiKeyModal from "./ApiKeyModal"
 import ReactMarkdown from 'react-markdown'
@@ -23,6 +24,7 @@ export default function ChatInterface() {
   
   const { theme, themeName, toggleTheme } = useTheme()
   const { hasApiKey } = useApiKey()
+  const { selectedModel } = useModel()
   
   const {
     chats,
@@ -275,7 +277,7 @@ export default function ChatInterface() {
                 {currentChat?.messages.map((message) => (
                   <div key={message.id} className="space-y-2">
                     <div className="flex items-center gap-2 text-xs" style={{color: theme.colors.secondaryText}}>
-                      <span>{message.role === 'user' ? 'You' : 'AI'}</span>
+                      <span>{message.role === 'user' ? 'You' : (message.modelName || 'AI')}</span>
                       <span>•</span>
                       <span>{message.role === 'assistant' && message.content === '' && isLoading ? 'typing...' : formatTimestamp(message.timestamp)}</span>
                     </div>
@@ -302,7 +304,7 @@ export default function ChatInterface() {
                 {isLoading && currentChat?.messages.length === 0 && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-xs" style={{color: theme.colors.secondaryText}}>
-                      <span>AI</span>
+                      <span>{selectedModel.name}</span>
                       <span>•</span>
                       <span>typing...</span>
                     </div>

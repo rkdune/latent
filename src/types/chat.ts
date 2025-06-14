@@ -3,6 +3,7 @@ export interface Message {
   role: 'user' | 'assistant'
   content: string
   timestamp: Date
+  modelName?: string // Optional field for assistant messages
 }
 
 export interface Chat {

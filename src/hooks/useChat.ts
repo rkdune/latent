@@ -84,7 +84,8 @@ export function useChat() {
       id: aiMessageId,
       role: 'assistant',
       content: '',
-      timestamp: new Date()
+      timestamp: new Date(),
+      modelName: selectedModel.name
     }
 
     addMessage(currentChat.id, aiMessage)
