@@ -1,45 +1,53 @@
-# Logits.App
+# [Logits.App](https://logits.app)
 
 ![Demo GIF](https://github.com/rkdune/latent/blob/main/demogif.gif)
 
-
-A modern, terminal-inspired AI chat interface built with Next.js and OpenRouter. Features a sleek dark theme, markdown support, and beautiful code blocks.
+A modern, terminal-inspired AI chat interface built with Next.js and OpenRouter. Features persistent chat history, optional Google authentication, multiple open-source AI models, and a sleek UI with both dark and light themes.
 
 ## Features
-
-- 💬 Real-time streaming responses
-- 📝 Markdown and code syntax highlighting
-- 🔄 Multiple AI model support via OpenRouter
-- 💾 Chat history management
-- 🌓 Theme customization
-
+- 💬 **Real-time streaming responses**
+- 🔄 **Multiple open-source AI model support**
+- 📝 **Rich markdown rendering**
+- 🔑 **Google OAuth integration**
+- 💾 **Persistent chat history**
+- 🚪 **Guest mode**
+- 🌓 **Dark/Light theme toggle**
+- 📑 **Tab-based chat management**
 
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── api/chat/
-│   │   └── route.ts           # OpenRouter API integration and streaming
+│   ├── api/
+│   │   ├── auth/[...nextauth]/
+│   │   │   └── route.ts       # NextAuth.js configuration
+│   │   └── chat/
+│   │       └── route.ts       # OpenRouter API integration and streaming
 │   ├── globals.css            # Global styles and CSS variables
 │   ├── layout.tsx             # Root layout with providers
 │   └── page.tsx               # Main application entry point
 ├── components/
-│   ├── chat-interface.tsx     # Main chat UI component
+│   ├── chat-interface.tsx     # Main chat UI with tabs and sidebar
 │   ├── model-selector.tsx     # AI model selection dropdown
-│   └── theme-wrapper.tsx      # Theme application wrapper
+│   ├── ApiKeyModal.tsx        # Custom API key configuration modal
+│   └── Providers.tsx          # Client-side context providers wrapper
 ├── contexts/
-│   ├── ModelContext.tsx       # Model selection state management
-│   └── ThemeContext.tsx       # Theme state management
+│   ├── AuthContext.tsx        # Authentication state management
+│   ├── ModelContext.tsx       # AI model selection state
+│   ├── ThemeContext.tsx       # Dark/light theme management
+│   └── ApiKeyContext.tsx      # Custom API key management
 ├── hooks/
-│   └── useChat.ts             # Chat state and message handling
+│   ├── useChat.ts             # Chat state, tabs, and message handling
+│   └── useDatabase.ts         # Supabase database operations
 ├── lib/
-│   └── utils.ts               # Utility functions (cn, etc.)
+│   ├── utils.ts               # Utility functions (cn, etc.)
+│   └── supabase.ts            # Supabase client configuration
 └── types/
     └── chat.ts                # TypeScript type definitions
 ```
 
-## Color Palette
+## Design System
 
 - **Primary Text**: #DEDEDE (active/strong white)
 - **Secondary Text**: #ABABAB (weaker gray)
