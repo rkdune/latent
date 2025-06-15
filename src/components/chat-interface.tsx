@@ -200,7 +200,7 @@ export default function ChatInterface() {
             {isAuthenticated ? (
               <LogOut className="w-4 h-4" style={{color: theme.colors.primaryText}} />
             ) : (
-              <User className="w-4 h-4" style={{color: theme.colors.secondaryText}} />
+              <User className="w-4 h-4" style={{color: theme.colors.primaryText}} />
             )}
           </button>
           
@@ -231,7 +231,7 @@ export default function ChatInterface() {
             }}
             title="Configure OpenRouter API Key"
           >
-            <Key className="w-4 h-4" style={{color: hasApiKey ? theme.colors.primaryText : theme.colors.secondaryText}} />
+            <Key className="w-4 h-4" style={{color: theme.colors.primaryText}} />
           </button>
           
           {/* New Chat Button */}

@@ -6,9 +6,14 @@ import { useAuth } from '@/contexts/AuthContext'
 export function useDatabase() {
   const { isAuthenticated, user } = useAuth()
 
-  // Save chat to database
+  // Save chat to database (only if it has messages)
   const saveChat = useCallback(async (chat: Chat): Promise<string | null> => {
     if (!isAuthenticated || !user?.id) return null
+    
+    // Don't save empty chats to database
+    if (chat.messages.length === 0) {
+      return null
+    }
 
     try {
       const { data, error } = await supabase

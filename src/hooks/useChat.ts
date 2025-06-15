@@ -39,7 +39,7 @@ export function useChat() {
             setActiveTabs([dbChats[0]])
             setActiveChat(dbChats[0].id)
           } else {
-            // If no chats in database, create a default one
+            // If no chats in database, create a default one (but don't save it until it has messages)
             const defaultChat: Chat = {
               id: Date.now(),
               title: "New Chat",
@@ -49,8 +49,7 @@ export function useChat() {
             setAllChats([defaultChat])
             setActiveTabs([defaultChat])
             setActiveChat(defaultChat.id)
-            // Save the default chat to database
-            await saveChat(defaultChat)
+            // Don't save empty chat to database
           }
           setHasLoadedFromDB(true)
         } catch (error) {
@@ -134,6 +133,15 @@ export function useChat() {
 
     addMessage(currentChat.id, userMessage)
 
+    // Save chat to database now that it has messages (if this is the first message)
+    if (isAuthenticated && currentChat.messages.length === 0) {
+      const chatToSave = {
+        ...currentChat,
+        messages: [userMessage] // Include the message we just added
+      }
+      saveChat(chatToSave)
+    }
+
     // Update chat title if it's the first message
     if (currentChat.messages.length === 0) {
       const newTitle = content.length > 30 ? content.substring(0, 30) + '...' : content
@@ -148,11 +156,7 @@ export function useChat() {
       setActiveTabs(updateChatsTitle)
       setAllChats(updateChatsTitle)
       
-      // Save updated chat to database if authenticated
-      if (isAuthenticated) {
-        const updatedChat = { ...currentChat, title: newTitle }
-        saveChat(updatedChat)
-      }
+      // We'll save the chat to database after the first message is added below
     }
 
     // Create AI message placeholder  
@@ -260,11 +264,8 @@ export function useChat() {
     setActiveTabs(prev => [...prev, newChat])
     setActiveChat(newChat.id)
     
-    // Save to database if authenticated
-    if (isAuthenticated) {
-      saveChat(newChat)
-    }
-  }, [allChats, isAuthenticated, saveChat])
+    // Don't save empty chat to database - it will be saved when first message is added
+  }, [allChats])
 
   const openChatInTab = useCallback((chatId: number) => {
     // Find the chat in allChats
@@ -301,12 +302,9 @@ export function useChat() {
       setAllChats(prev => [...prev, newChat])
       setActiveTabs([newChat])
       setActiveChat(newChat.id)
-      // Save to database if authenticated
-      if (isAuthenticated) {
-        saveChat(newChat)
-      }
+      // Don't save empty chat to database - it will be saved when first message is added
     }
-  }, [activeTabs, activeChat, isAuthenticated, saveChat])
+  }, [activeTabs, activeChat])
 
   const deleteChat = useCallback((chatId: number) => {
     // Permanently delete from both allChats and activeTabs
@@ -328,10 +326,7 @@ export function useChat() {
         setAllChats(prev => [...prev, newChat])
         setActiveTabs([newChat])
         setActiveChat(newChat.id)
-        // Save to database if authenticated
-        if (isAuthenticated) {
-          saveChat(newChat)
-        }
+        // Don't save empty chat to database - it will be saved when first message is added
       }
     }
     
@@ -339,7 +334,7 @@ export function useChat() {
     if (isAuthenticated) {
       dbDeleteChat(chatId.toString())
     }
-  }, [activeTabs, activeChat, isAuthenticated, dbDeleteChat, saveChat])
+      }, [activeTabs, activeChat, isAuthenticated, dbDeleteChat])
 
   return {
     // For tabs
